@@ -4,7 +4,6 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 /**
  * Created by Guillaume on 13/11/2017.
@@ -18,11 +17,21 @@ public class MerkleTree {
     private int beginIndex;
     private int endIndex;
 
-
+    /**
+     * Create a MerkelTree for a leaf
+     * @param event
+     * @throws Exception
+     */
     public MerkleTree(String event) throws Exception {
         this.hash = sha256((char) 0x00 + event);
     }
 
+    /**
+     * Create a MerkelTree for an internal Node
+     * @param leftNode
+     * @param rightNode
+     * @throws Exception
+     */
     public MerkleTree(MerkleTree leftNode, MerkleTree rightNode) throws Exception {
         this.leftNode = leftNode;
         this.rightNode = rightNode;

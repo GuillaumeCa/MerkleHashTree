@@ -1,12 +1,10 @@
 package org.iseplab.merklehashtree;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * Created by Guillaume on 13/11/2017.
@@ -14,6 +12,11 @@ import java.util.stream.IntStream;
  */
 public class MerkleTreeFactory {
 
+    /**
+     * Create a MerkelTree
+     * @param file
+     * @return
+     */
     public static MerkleTree createTree(String file) {
         try (BufferedReader br = Files.newBufferedReader(Paths.get(file))) {
             return computeTree(br);
@@ -34,17 +37,16 @@ public class MerkleTreeFactory {
             }
         });
 
-        int treesSize = leafTrees.size();
         List<MerkleTree> trees = leafTrees;
-        while (treesSize != 1) {
-            List<MerkleTree> newTrees = new ArrayList<>();
-            for (int i = 0; i < treesSize; i++) {
-                if (i % 2 == 0 && i + 1 < treesSize) {
-                    newTrees.add(new MerkleTree(trees.get(i), trees.get(i+1)));
+        while (trees.size() != 1) {
+            List<MerkleTree> tempTrees = new ArrayList<>();
+            for (int i = 0; i < trees.size(); i++) {
+                // currently omitting last value if number of events is not even
+                if (i % 2 == 0 && i + 1 < trees.size()) {
+                    tempTrees.add(new MerkleTree(trees.get(i), trees.get(i+1)));
                 }
             }
-            treesSize = newTrees.size();
-            trees = newTrees;
+            trees = tempTrees;
         }
         return trees.get(0);
     }
