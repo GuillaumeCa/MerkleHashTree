@@ -1,8 +1,10 @@
 package org.iseplab.merklehashtree;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 /**
  * Created by Guillaume on 13/11/2017.
@@ -17,27 +19,32 @@ public class MerkleTree {
     private int endIndex;
 
 
-    public MerkleTree(String event) {
-        hash = sha256((char) 0x00 + event);
+    public MerkleTree(String event) throws Exception {
+        this.hash = sha256((char) 0x00 + event);
     }
 
-    public MerkleTree(MerkleTree leftNode, MerkleTree rightNode) {
-        String leftHash = new String(leftNode.getHash());
-        String rightHash = new String(rightNode.getHash());
-        hash = sha256((char) 0x01 + leftHash + rightHash);
+    public MerkleTree(MerkleTree leftNode, MerkleTree rightNode) throws Exception {
+        this.leftNode = leftNode;
+        this.rightNode = rightNode;
+        this.hash = sha256((char) 0x01 + new String(leftNode.getHash()) + new String(rightNode.getHash()));
     }
 
-    private byte[] sha256(String data) {
+    private byte[] sha256(String data) throws Exception {
         try {
             MessageDigest digest= null;
-            digest = MessageDigest.getInstance("SHA256");
-            byte [] hash = digest.digest(data.getBytes("UTF-8"));
+            digest = MessageDigest.getInstance("SHA-256");
+            return digest.digest(data.getBytes("UTF-8"));
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw new Exception("cannot hash data: "+data, e);
         }
     }
 
     public byte[] getHash() {
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "["+ DatatypeConverter.printHexBinary(hash) +"]";
     }
 }
