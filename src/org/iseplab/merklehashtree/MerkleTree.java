@@ -1,5 +1,6 @@
 package org.iseplab.merklehashtree;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -17,16 +18,26 @@ public class MerkleTree {
 
 
     public MerkleTree(String event) {
-        sha256(0x00 | event.getBytes("UTF-8"));
+        hash = sha256((char) 0x00 + event);
     }
 
-    private byte[] sha256(byte[] data) {
+    public MerkleTree(MerkleTree leftNode, MerkleTree rightNode) {
+        String leftHash = new String(leftNode.getHash());
+        String rightHash = new String(rightNode.getHash());
+        hash = sha256((char) 0x01 + leftHash + rightHash);
+    }
+
+    private byte[] sha256(String data) {
         try {
             MessageDigest digest= null;
             digest = MessageDigest.getInstance("SHA256");
-            byte [] hash = digest.digest(data);
-        } catch (NoSuchAlgorithmException e) {
+            byte [] hash = digest.digest(data.getBytes("UTF-8"));
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public byte[] getHash() {
+        return hash;
     }
 }
