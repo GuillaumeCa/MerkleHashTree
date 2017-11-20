@@ -7,7 +7,8 @@ package org.iseplab.merklehashtree;
 public class Main {
 
     public static void main(String[] args) {
-        MerkleTree tree = MerkleTreeFactory.createTree("traces/DS2-trace.txt");
+        MerkleTreeFactory factory = MerkleTreeFactory.getFactory();
+        MerkleTree tree = factory.createTree("traces/DS1-trace.txt");
         System.out.println(tree);
     }
 

@@ -12,12 +12,14 @@ import java.util.List;
  */
 public class MerkleTreeFactory {
 
+    private static MerkleTreeFactory factory = new MerkleTreeFactory();
+
     /**
      * Create a MerkelTree
      * @param file
      * @return
      */
-    public static MerkleTree createTree(String file) {
+    public MerkleTree createTree(String file) {
         try (BufferedReader br = Files.newBufferedReader(Paths.get(file))) {
             return computeTree(br);
         } catch (Exception e) {
@@ -27,7 +29,7 @@ public class MerkleTreeFactory {
     }
 
 
-    private static MerkleTree computeTree(BufferedReader reader) throws Exception {
+    private MerkleTree computeTree(BufferedReader reader) throws Exception {
         List<MerkleTree> leafTrees = new ArrayList<>();
         reader.lines().forEach(line -> {
             try {
@@ -40,15 +42,16 @@ public class MerkleTreeFactory {
         List<MerkleTree> trees = leafTrees;
         while (trees.size() != 1) {
             List<MerkleTree> tempTrees = new ArrayList<>();
-            for (int i = 0; i < trees.size(); i++) {
-                // currently omitting last value if number of events is not even
-                if (i % 2 == 0 && i + 1 < trees.size()) {
-                    tempTrees.add(new MerkleTree(trees.get(i), trees.get(i+1)));
-                }
+            for (int i = 0; i < trees.size(); i += 2) {
+                MerkleTree rightTree = trees.get((i + 1 < trees.size()) ? i + 1 : i);
+                tempTrees.add(new MerkleTree(trees.get(i), rightTree));
             }
             trees = tempTrees;
         }
         return trees.get(0);
     }
 
+    public static MerkleTreeFactory getFactory() {
+        return factory;
+    }
 }
