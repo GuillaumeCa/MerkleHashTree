@@ -22,8 +22,10 @@ public class MerkleTree {
      * @param event
      * @throws Exception
      */
-    public MerkleTree(String event) throws Exception {
+    public MerkleTree(String event, int line) throws Exception {
         this.hash = sha256((char) 0x00 + event);
+        this.beginIndex = line;
+        this.endIndex = line;
     }
 
     /**
@@ -35,6 +37,10 @@ public class MerkleTree {
     public MerkleTree(MerkleTree leftNode, MerkleTree rightNode) throws Exception {
         this.leftNode = leftNode;
         this.rightNode = rightNode;
+
+        this.beginIndex = leftNode.beginIndex;
+        this.endIndex = rightNode.endIndex;
+
         this.hash = sha256((char) 0x01 + new String(leftNode.getHash()) + new String(rightNode.getHash()));
     }
 
@@ -53,6 +59,6 @@ public class MerkleTree {
 
     @Override
     public String toString() {
-        return "["+ DatatypeConverter.printHexBinary(hash) +"]";
+        return "["+ DatatypeConverter.printHexBinary(hash) +"] - h: " + beginIndex + ".." + endIndex;
     }
 }

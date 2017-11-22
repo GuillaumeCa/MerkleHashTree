@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Guillaume on 13/11/2017.
@@ -22,14 +23,10 @@ public class MerkleTreeFactory {
     public MerkleTree createTree(String file) {
         try (BufferedReader br = Files.newBufferedReader(Paths.get(file))) {
             List<MerkleTree> leafTrees = new ArrayList<>();
-            br.lines().forEach(line -> {
-                try {
-                    leafTrees.add(new MerkleTree(line));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-
+            List<String> lines = br.lines().collect(Collectors.toList());
+            for (int i = 0; i < lines.size(); i++) {
+                leafTrees.add(new MerkleTree(lines.get(i), i + 1));
+            }
             // odd leaf number
             if (leafTrees.size() % 2 != 0) {
                 leafTrees.add(leafTrees.get(leafTrees.size() - 1));
