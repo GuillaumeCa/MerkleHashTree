@@ -21,7 +21,20 @@ public class MerkleTreeFactory {
      */
     public MerkleTree createTree(String file) {
         try (BufferedReader br = Files.newBufferedReader(Paths.get(file))) {
-            return computeTree(br);
+            List<MerkleTree> leafTrees = new ArrayList<>();
+            br.lines().forEach(line -> {
+                try {
+                    leafTrees.add(new MerkleTree(line));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            // odd leaf number
+            if (leafTrees.size() % 2 != 0) {
+                leafTrees.add(leafTrees.get(leafTrees.size() - 1));
+            }
+            return computeTree(leafTrees);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,22 +42,16 @@ public class MerkleTreeFactory {
     }
 
 
-    private MerkleTree computeTree(BufferedReader reader) throws Exception {
-        List<MerkleTree> leafTrees = new ArrayList<>();
-        reader.lines().forEach(line -> {
-            try {
-                leafTrees.add(new MerkleTree(line));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
+    private MerkleTree computeTree(List<MerkleTree> leafTrees) throws Exception {
         List<MerkleTree> trees = leafTrees;
         while (trees.size() != 1) {
             List<MerkleTree> tempTrees = new ArrayList<>();
             for (int i = 0; i < trees.size(); i += 2) {
-                MerkleTree rightTree = trees.get((i + 1 < trees.size()) ? i + 1 : i);
-                tempTrees.add(new MerkleTree(trees.get(i), rightTree));
+                if (i + 1 >= trees.size()) {
+                    tempTrees.add(trees.get(i));
+                } else {
+                    tempTrees.add(new MerkleTree(trees.get(i), trees.get(i + 1)));
+                }
             }
             trees = tempTrees;
         }

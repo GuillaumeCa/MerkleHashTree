@@ -40,8 +40,7 @@ public class MerkleTree {
 
     private byte[] sha256(String data) throws Exception {
         try {
-            MessageDigest digest= null;
-            digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
             return digest.digest(data.getBytes("UTF-8"));
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             throw new Exception("cannot hash data: "+data, e);
