@@ -17,6 +17,10 @@ public class MerkleTree {
     private int beginIndex;
     private int endIndex;
 
+    private int nbLeaves;
+
+    private int maxNbLeaves;
+
     /**
      * Create a MerkelTree for a leaf
      * @param event
@@ -26,6 +30,8 @@ public class MerkleTree {
         this.hash = sha256((char) 0x00 + event);
         this.beginIndex = line;
         this.endIndex = line;
+        this.nbLeaves = 1;
+        this.maxNbLeaves = 1;
     }
 
     /**
@@ -40,8 +46,52 @@ public class MerkleTree {
 
         this.beginIndex = leftNode.beginIndex;
         this.endIndex = rightNode.endIndex;
+        this.nbLeaves = leftNode.nbLeaves + rightNode.nbLeaves;
+
+        int maxSubtreeLeaves = Math.max(leftNode.getMaxNbLeaves(), rightNode.getMaxNbLeaves());
+        this.maxNbLeaves = this.nbLeaves < maxSubtreeLeaves ? maxSubtreeLeaves : 2 * maxSubtreeLeaves;
 
         this.hash = sha256((char) 0x01 + new String(leftNode.getHash()) + new String(rightNode.getHash()));
+    }
+
+    public int getBeginIndex() {
+        return beginIndex;
+    }
+
+    public void setBeginIndex(int beginIndex) {
+        this.beginIndex = beginIndex;
+    }
+
+    public int getEndIndex() {
+        return endIndex;
+    }
+
+    public void setEndIndex(int endIndex) {
+        this.endIndex = endIndex;
+    }
+
+    public int getNbLeaves() {
+        return nbLeaves;
+    }
+
+    public void setNbLeaves(int nbLeaves) {
+        this.nbLeaves = nbLeaves;
+    }
+
+    public int getMaxNbLeaves() {
+        return maxNbLeaves;
+    }
+
+    public void setMaxNbLeaves(int maxNbLeaves) {
+        this.maxNbLeaves = maxNbLeaves;
+    }
+
+    public MerkleTree getLeftNode() {
+        return leftNode;
+    }
+
+    public MerkleTree getRightNode() {
+        return rightNode;
     }
 
     private byte[] sha256(String data) throws Exception {
@@ -59,6 +109,6 @@ public class MerkleTree {
 
     @Override
     public String toString() {
-        return "["+ DatatypeConverter.printHexBinary(hash) +"] - h: " + beginIndex + ".." + endIndex;
+        return DatatypeConverter.printHexBinary(hash) +" - h: " + beginIndex + ".." + endIndex;
     }
 }

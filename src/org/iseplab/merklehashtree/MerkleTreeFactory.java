@@ -25,12 +25,9 @@ public class MerkleTreeFactory {
             List<MerkleTree> leafTrees = new ArrayList<>();
             List<String> lines = br.lines().collect(Collectors.toList());
             for (int i = 0; i < lines.size(); i++) {
-                leafTrees.add(new MerkleTree(lines.get(i), i + 1));
+                leafTrees.add(new MerkleTree(lines.get(i), i+1));
             }
-            // odd leaf number
-            if (leafTrees.size() % 2 != 0) {
-                leafTrees.add(leafTrees.get(leafTrees.size() - 1));
-            }
+
             return computeTree(leafTrees);
         } catch (Exception e) {
             e.printStackTrace();
