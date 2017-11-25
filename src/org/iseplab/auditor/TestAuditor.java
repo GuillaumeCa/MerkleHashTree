@@ -12,6 +12,7 @@ public class TestAuditor {
 
             Auditor audit = new Auditor(ls);
 
+            // Test isMember()
             System.out.println("isMember result : " + audit.isMember("Start", 4));
 
         } catch(Exception e) {
