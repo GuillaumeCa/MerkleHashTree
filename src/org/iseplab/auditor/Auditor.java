@@ -86,4 +86,12 @@ public class Auditor {
             throw new Exception("cannot hash data: "+data, e);
         }
     }
+
+    public LogServer getServer() {
+        return server;
+    }
+
+    public int getTreeSize() {
+        return treeSize;
+    }
 }
